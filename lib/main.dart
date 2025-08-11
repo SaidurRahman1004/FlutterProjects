@@ -128,7 +128,7 @@ btnSnk(msg,context){
                     btnSnk("Add to Cart Item",context);
                   }, child: Text("Buy Now"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellowAccent,
+                      backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(),
                     ),
 
