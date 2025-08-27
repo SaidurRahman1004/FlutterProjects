@@ -1,16 +1,17 @@
-# flutterprojects
+# Digital Business Card App
 
-A new Flutter project.
+A simple Flutter app showcasing a digital profile card.
 
-## Getting Started
+## Features
+- Profile picture, name, profession
+- Click-to-call, email, social media links
+- Clean UI with Google Fonts and FontAwesome icons
 
-This project is a starting point for a Flutter application.
+## Screenshot
+(Add your app screenshot here)
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
+- Flutter
+- url_launcher
+- font_awesome_flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

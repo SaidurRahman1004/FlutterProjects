@@ -5,7 +5,7 @@ import 'Extra/TestCode.dart';
 void main() {
   runApp(
     MaterialApp(
-      home: ProfileApp(),
+      home: profile_app(),
       debugShowCheckedModeBanner: false,
     )
   );

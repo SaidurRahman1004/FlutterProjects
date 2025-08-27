@@ -16,12 +16,19 @@ class profile_app extends StatelessWidget {
     );
 
   }
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.blue[50],
         appBar: AppBar(
           title: const Text(
             'My Profile',
@@ -50,7 +57,7 @@ class profile_app extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.blue[100]!, Colors.blue[100]!],
+                  colors: [Colors.blue.shade200, Colors.blue.shade50],
                 ),
               ),
               child: Center(
@@ -83,7 +90,7 @@ class profile_app extends StatelessWidget {
                         // Medium weight
                         color: Colors.black.withOpacity(0.75),
                         height: 1.4,
-                        letterSpacing: 0.1,
+                        letterSpacing: 0.3,
                       ),
                     ),
                     Divider(
@@ -100,6 +107,7 @@ class profile_app extends StatelessWidget {
                           color: Colors.indigo[300],
                         ),
                         title: Text("+8801795664122"),
+                        onTap: () => _launchURL('tel:+8801795664122'),
                       ),
                     ),
                     Card(
@@ -110,6 +118,7 @@ class profile_app extends StatelessWidget {
                           color: Colors.indigo[300],
                         ),
                         title: Text("saidurrahman1004@gmail.com"),
+                        onTap: () => _launchURL('mailto:saidurrahman1004@gmail.com'),
                       ),
                     ),
                     Padding(
@@ -117,10 +126,10 @@ class profile_app extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          IconButton(onPressed: (){ CustomSnackBar("Facebook", scaffoldContext);}, icon: Icon(Icons.facebook,color: Colors.indigo[300],size: 40,)),
-                          IconButton(onPressed: (){CustomSnackBar("Reddit", scaffoldContext);}, icon: Icon(Icons.reddit,color: Colors.red[300],size: 40,)),
-                          IconButton(onPressed: (){CustomSnackBar("Telegram", scaffoldContext);}, icon: Icon(Icons.telegram,color: Colors.indigo[300],size: 40,)),
-
+                          IconButton(onPressed: (){ _launchURL("https://facebook.com/srs1313"); }, icon: FaIcon(FontAwesomeIcons.facebook, color: Colors.blue, size: 35)),
+                          IconButton(onPressed: (){_launchURL("https://w.me/+8801795664122");}, icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.blue, size: 35)),
+                          IconButton(onPressed: (){_launchURL("https://t.me/@SiyamS1");}, icon: Icon(Icons.telegram,color: Colors.indigo[300],size: 40,)),
+                          IconButton(onPressed: (){_launchURL("https://github.com/SaidurRahman1004");}, icon: FaIcon(FontAwesomeIcons.github, color: Colors.blue, size: 35)),
 
                         ],
                       ),
