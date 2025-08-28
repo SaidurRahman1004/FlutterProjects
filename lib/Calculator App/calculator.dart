@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 import 'buttonFunctions.dart';
+
 class calculator extends StatefulWidget {
   const calculator({super.key});
 
@@ -9,18 +11,41 @@ class calculator extends StatefulWidget {
 }
 
 class _calculatorState extends State<calculator> {
+  String _output = "0"; //just Result
+  String _equation = "0"; //input
 
+  void _buttonClickResult(String btnValue){
+    setState(() {
+      if(btnValue == "AC"){
+        _output = "0";
+        _equation = "0";
+      }
+      else if(btnValue == "⌫"){
+        _equation = _equation.length > 1 ? _equation.substring(0, _equation.length-1) : "0";
+      }
+      else if(btnValue == "="){
+        try{
+          Parser p = Parser();
+          Expression exp = p.parse(_equation.replaceAll('×', '*').replaceAll('÷', '/'));
+          ContextModel cm = ContextModel();
+          _output = exp.evaluate(EvaluationType.REAL, cm).toString();
+        } catch(e){
+          _output = "Error";
+        }
+      }
+      else{
+        if(_equation == "0"){_equation = btnValue;}
+        else{_equation += btnValue;}
+      }
+    });
+ }
 
-  String _output = "1061"; // ডিসপ্লেতে দেখানোর জন্য
-  String _equation = "2122 ÷ 2"; // ইনপুটের জন্য
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-      ),
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
       title: "Calculator",
       home: Scaffold(
         appBar: AppBar(
@@ -47,18 +72,18 @@ class _calculatorState extends State<calculator> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        _equation,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
                         _output,
                         style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _equation,
+                        style: const TextStyle(
+                          fontSize: 30,
                           color: Colors.white,
                         ),
                       ),
@@ -82,11 +107,11 @@ class _calculatorState extends State<calculator> {
                   final btn = calculatorButtons[index];
                   Color bgColor;
                   Color txtColor = Colors.white;
-                  if(btn.type == "number"){
+                  if (btn.type == "number") {
                     bgColor = Colors.grey[850]!;
-                  }else if(btn.type == "operator"){
+                  } else if (btn.type == "operator") {
                     bgColor = Colors.orange;
-                  }else{
+                  } else {
                     bgColor = Colors.grey;
                     txtColor = Colors.black;
                   }
@@ -98,7 +123,9 @@ class _calculatorState extends State<calculator> {
                       padding: EdgeInsets.all(20),
                       elevation: 4,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _buttonClickResult(calculatorButtons[index].label);
+                    },
                     child: Text(
                       calculatorButtons[index].label,
                       style: TextStyle(

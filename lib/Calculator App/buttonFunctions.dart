@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'buttonFunctions.dart';
 
 class CalcButton {
   final String label;
@@ -36,7 +37,7 @@ final List<CalcButton> calculatorButtons = [
   // Row 5
   CalcButton("0", "number"),
   CalcButton(".", "number"),
-  CalcButton("C", "action"), // backspace
+  CalcButton("⌫", "action"), // backspace
   CalcButton("=", "action"),
 ];
 
