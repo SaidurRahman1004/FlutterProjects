@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'Digital Business Card/profile_app.dart';
 import 'Extra/TestCode.dart';
+import 'Calculator App/calculator.dart';
 
 void main() {
   runApp(
     MaterialApp(
-      home: profile_app(),
+      home: calculator(),
       debugShowCheckedModeBanner: false,
     )
   );
