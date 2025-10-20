@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'model/product_model.dart';
 import 'product_api_controller.dart';
+import 'widget/add_product_dialog.dart';
 
 class curdUi extends StatefulWidget {
   const curdUi({super.key});
@@ -26,12 +28,90 @@ class _curdUiState extends State<curdUi> {
     }
   }
 
+  //
+  void _showDeleteConfirmationDialog(String id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text("Are you sure you want to delete this product?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                setState(() {
+                  _loading = true;
+                });
+                final success = await controller.deletProduct(id);
+                if (success) {
+                  await fetchData();
+                } else {
+                  setState(() {
+                    _loading = false;
+                  });
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Failed to delete product")),
+                    );
+                  }
+                }
+              },
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showAddUpdateDialog({ProductData? product}) async {
+    final result = await showDialog(
+      context: context,
+      builder: (_) => AddProductDialog(product: product),
+    );
+    if (result != null && result is ProductData) {
+      setState(() {
+        _loading = true;
+      });
+      bool success;
+      if(product == null ){
+        success = await controller.addProduct(result);
+      }else{
+        success = await controller.UpdateProduct(result);;
+      }
+
+      if (success) {
+        await fetchData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+            "  Product ${product == null ? 'added' : 'updated'} successfully!",
+          )),
+        );
+
+
+      }else{
+        setState(() {
+          _loading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+            " Failed to ${product == null ? 'add' : 'update'} product!",
+          )),
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchData();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +124,7 @@ class _curdUiState extends State<curdUi> {
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: Colors.red,))
+          ? Center(child: CircularProgressIndicator(color: Colors.red))
           : controller.productStore.isEmpty
           ? Center(child: Text("No Data Found"))
           : GridView.builder(
@@ -69,22 +149,25 @@ class _curdUiState extends State<curdUi> {
                       children: [
                         //Image with Error Handling
                         Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey.shade300,
-                                image: productAccess.img != null ? DecorationImage(image: NetworkImage(productAccess.img!),
-                                  fit: BoxFit.cover,
-
-                                ): null,
-
-                              ),
-                              child: productAccess.img == null ? Center(child: Icon(Icons.image_not_supported),): null,
-                            )
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.shade300,
+                              image: productAccess.img != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(productAccess.img!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                            child: productAccess.img == null
+                                ? Center(child: Icon(Icons.image_not_supported))
+                                : null,
+                          ),
                         ),
                         SizedBox(height: 10),
-//name
+                        //name
                         Text(
                           productAccess.productName ?? "No Name",
                           style: const TextStyle(
@@ -94,13 +177,26 @@ class _curdUiState extends State<curdUi> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-//price
-                        Text(
-                          "৳ ${productAccess.productCode ?? '0'}",
-                          style: const TextStyle(
-                            color: Colors.teal,
-                            fontSize: 14,
-                          ),
+
+                        //price
+                        Row(
+                          children: [
+                            Text(
+                              "৳ ${productAccess.unitPrice ?? '0'}",
+                              style: const TextStyle(
+                                color: Colors.teal,
+                                fontSize: 14,
+                              ),
+                            ),
+                            SizedBox(width: 5,),
+                            Text(
+                              "|Q:${productAccess.qty ?? '--'}",
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 5),
                         //Edit and Dellet Button
@@ -108,23 +204,38 @@ class _curdUiState extends State<curdUi> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             //Edit
-                            IconButton(onPressed: (){},  icon: Icon(Icons.edit, color: Colors.blueAccent),tooltip: "Edit"),
+                            IconButton(
+                              onPressed: () {
+                                showAddUpdateDialog(product: productAccess);
+                              },
+                              icon: Icon(Icons.edit, color: Colors.blueAccent),
+                              tooltip: "Edit",
+                            ),
                             //Dellet
-                            IconButton(onPressed: (){},  icon: Icon(Icons.delete, color: Colors.red),tooltip: "Dellet"),
+                            IconButton(
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(
+                                  productAccess.id!,
+                                );
+                              },
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              tooltip: "Dellet",
+                            ),
                           ],
                         ),
-
-
-
                       ],
-
                     ),
-
                   ),
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(onPressed: (){},child: Icon(Icons.add),tooltip: "Add Product",),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showAddUpdateDialog();
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

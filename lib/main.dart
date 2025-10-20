@@ -14,18 +14,3 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: Column(
-        children: [
-          //https://i.postimg.cc/jjKRZgRq/profile-pic-1.png
-        ],
-      )),
-
-    );
-  }
-}
